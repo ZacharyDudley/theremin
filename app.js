@@ -12,7 +12,21 @@ const server = app.listen(3000, function(){
 const io = socketio(server)
 
 io.on('connect', socket => {
-  console.log('HI')
+  let greet = 'CONNECTED TO SERVER'
+  console.log(greet)
+  socket.emit('greet', greet)
+
+
+  socket.on('callFreq', id => {
+    console.log('FREQ is ', id)
+    socket.emit('assignFreq', id)
+  })
+
+  socket.on('callAmp', id => {
+    console.log('AMP is ', id)
+    socket.emit('assignAmp', id)
+  })
+
 })
 
 app.use(morgan('dev'));
