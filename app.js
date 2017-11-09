@@ -12,21 +12,30 @@ const server = app.listen(3000, function(){
 const io = socketio(server)
 
 io.on('connect', socket => {
-  let greet = 'CONNECTED TO SERVER'
+  let greet = 'CONNECTED: ' + socket.id
   console.log(greet)
   socket.emit('greet', greet)
 
 
   socket.on('callFreq', id => {
     console.log('FREQ is ', id)
-    socket.emit('assignFreq', id)
+    socket.broadcast.emit('assignFreq', id)
   })
 
   socket.on('callAmp', id => {
     console.log('AMP is ', id)
-    socket.emit('assignAmp', id)
+    socket.broadcast.emit('assignAmp', id)
   })
 
+  socket.on('light', (fromWho, light) => {
+    console.log(light, fromWho, socket.id)
+    socket.broadcast.emit('gain', light)
+  })
+
+  socket.on('shout', message => {
+    socket.emit('update', ['EMIT', socket.id, message])
+    socket.broadcast.emit('update', ['BROADCAST', socket.id, message])
+  })
 })
 
 app.use(morgan('dev'));
